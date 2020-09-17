@@ -40,8 +40,10 @@ module Less
         import_paths = source.scan(IMPORT_SCANNER).flatten.compact.uniq
         import_paths.each do |path|
           pathname = PATHNAME_FINDER.call(scope, path) || PATHNAME_FINDER.call(scope, File.join(base, path))
-          scope.depend_on(pathname) if pathname && pathname.to_s.ends_with?('.less')
-          depend_on scope, File.read(pathname), File.dirname(path) if pathname
+          if pathname && pathname.to_s.ends_with?('.less')
+            scope.depend_on(pathname)
+            depend_on scope, File.read(pathname), File.dirname(path)
+          end
         end
         source
       end
